@@ -6,7 +6,9 @@
 
 // view the products
 
-// product should populate categories, transactio
+// product should populate categories, transaction
+
+// when you add a new product, you must include
 
 const { validationResult } = require("express-validator");
 const getCoordsForAddress = require("../utils/location");
