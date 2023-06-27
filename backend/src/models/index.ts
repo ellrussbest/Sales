@@ -1,8 +1,8 @@
 export * from "./http-error.js";
-export * from "./category.js"
-export * from "./product.js"
-export * from "./productReturned.js"
-export * from "./return.js"
-export * from "./salesPerson.js"
-export * from "./supplier.js"
-export * from "./transaction.js"
+export * as Category from "./category.js";
+export * as Product from "./product.js";
+export * as ProductReturned from "./productReturned.js";
+export * as Return from "./return.js";
+export * as SalesPerson from "./salesPerson.js";
+export * as Supplier from "./supplier.js";
+export * as Transaction from "./transaction.js";
