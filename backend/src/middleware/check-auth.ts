@@ -9,11 +9,7 @@ export interface IRequest extends Request {
   };
 }
 
-export default function checkAuth(
-  req: IRequest,
-  res: Response,
-  next: NextFunction
-) {
+export function checkAuth(req: IRequest, res: Response, next: NextFunction) {
   if (req.method == "OPTIONS") return next();
 
   try {

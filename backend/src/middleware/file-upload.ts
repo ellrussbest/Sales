@@ -7,7 +7,7 @@ enum MIME_TYPE {
   "image/jpg" = "jpg",
 }
 
-const fileUpload = multer({
+export const fileUpload = multer({
   limits: {
     fileSize: 500000,
   },
@@ -50,5 +50,3 @@ const fileUpload = multer({
     cb(null, isValid);
   },
 });
-
-export default fileUpload;

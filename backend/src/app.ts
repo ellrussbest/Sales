@@ -7,7 +7,8 @@ import cors from "cors";
 import { IHttpError } from "./models/index.js";
 import mongoose from "mongoose";
 
-// import routes here
+/** Route imports */
+import { categoriesRouter } from "./routes/index.js";
 
 config();
 const app = express();
@@ -19,7 +20,10 @@ app.use("uploads/images", express.static(path.join("uploads", "images")));
 
 app.use(cors());
 
-// custom middlewares goes here
+/** custom middlewares goes here */
+/** import routes here */
+app.use("/api/categories", categoriesRouter);
+
 app.use(
   (error: IHttpError, req: Request, res: Response, next: NextFunction) => {
     if (req.file) {

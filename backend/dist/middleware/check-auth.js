@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { HttpError } from "../models/index.js";
-export default function checkAuth(req, res, next) {
+export function checkAuth(req, res, next) {
     var _a;
     if (req.method == "OPTIONS")
         return next();

@@ -6,7 +6,7 @@ var MIME_TYPE;
     MIME_TYPE["image/jpeg"] = "jpeg";
     MIME_TYPE["image/jpg"] = "jpg";
 })(MIME_TYPE || (MIME_TYPE = {}));
-const fileUpload = multer({
+export const fileUpload = multer({
     limits: {
         fileSize: 500000,
     },
@@ -48,4 +48,3 @@ const fileUpload = multer({
         cb(null, isValid);
     },
 });
-export default fileUpload;
