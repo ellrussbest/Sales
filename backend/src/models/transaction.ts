@@ -12,4 +12,4 @@ const transactionSchema = new Schema({
   returns: [{ type: mongoose.Types.ObjectId, required: true, ref: "Return" }],
 });
 
-export default mongoose.model("Transaction", transactionSchema);
+export const Transaction = mongoose.model("Transaction", transactionSchema);

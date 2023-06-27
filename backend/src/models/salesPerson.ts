@@ -10,4 +10,4 @@ const salesPersonSchema = new Schema({
   ],
 });
 
-export default mongoose.model("SalesPerson", salesPersonSchema);
+export const SalesPerson = mongoose.model("SalesPerson", salesPersonSchema);

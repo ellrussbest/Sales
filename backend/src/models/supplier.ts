@@ -8,4 +8,4 @@ const supplierSchema = new Schema({
   status: { type: Boolean, required: true },
 });
 
-export default mongoose.model("Supplier", supplierSchema);
+export const Supplier = mongoose.model("Supplier", supplierSchema);

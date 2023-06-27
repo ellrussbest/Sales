@@ -10,4 +10,4 @@ const returnSchema = new Schema({
   },
 });
 
-export default mongoose.model("Return", returnSchema);
+export const Return = mongoose.model("Return", returnSchema);

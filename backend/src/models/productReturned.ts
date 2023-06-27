@@ -16,4 +16,4 @@ const productSchema = new Schema({
   reasonForReturn: { type: String, required: true },
 });
 
-export default mongoose.model("ProductReturned", productSchema);
+export const ProductReturned =  mongoose.model("ProductReturned", productSchema);

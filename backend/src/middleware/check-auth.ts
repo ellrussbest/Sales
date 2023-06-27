@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Request, Response, NextFunction } from "express";
 import { HttpError } from "../models/index.js";
 
-interface IRequest extends Request {
+export interface IRequest extends Request {
   userData?: {
     userId: string;
     isAdmin: boolean;

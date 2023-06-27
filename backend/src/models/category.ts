@@ -7,4 +7,4 @@ const categorySchema = new Schema({
   products: [{ type: mongoose.Types.ObjectId, required: true, ref: "Product" }],
 });
 
-export default mongoose.model("Category", categorySchema);
+export const Category = mongoose.model("Category", categorySchema);
