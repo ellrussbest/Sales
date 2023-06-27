@@ -7,7 +7,7 @@ export function checkAuth(req, res, next) {
     try {
         const token = (_a = req.headers.authorization) === null || _a === void 0 ? void 0 : _a.split(" ")[1];
         if (!token)
-            throw new Error("Authentication failed");
+            return next(new Error("Authentication failed"));
         const decodedToken = jwt.verify(token, process.env.SECRET);
         req.userData = {
             userId: typeof decodedToken !== "string" && decodedToken.userId,

@@ -14,7 +14,7 @@ export function checkAuth(req: IRequest, res: Response, next: NextFunction) {
 
   try {
     const token = req.headers.authorization?.split(" ")[1];
-    if (!token) throw new Error("Authentication failed");
+    if (!token) return next(new Error("Authentication failed"));
 
     const decodedToken = jwt.verify(token, process.env.SECRET);
     req.userData = {
