@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 /** Route imports */
-import { categoriesRouter, salesPersonRouter } from "./routes/index.js";
+import { categoriesRouter, productsRouter, salesPersonRouter, supplierRouter, } from "./routes/index.js";
 config();
 const app = express();
 /** Parsing bodyParser.json() as a middleware */
@@ -16,8 +16,10 @@ app.use("uploads/images", express.static(path.join("uploads", "images")));
 app.use(cors());
 /** custom middlewares goes here */
 /** import routes here */
-app.use("/api/categories", categoriesRouter);
+app.use("/api/category", categoriesRouter);
 app.use("/api/user", salesPersonRouter);
+app.use("/api/product", productsRouter);
+app.use("/api/supplier", supplierRouter);
 app.use((error, req, res, next) => {
     var _a;
     if (req.file) {

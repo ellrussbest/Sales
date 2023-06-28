@@ -8,7 +8,12 @@ import { IHttpError } from "./models/index.js";
 import mongoose from "mongoose";
 
 /** Route imports */
-import { categoriesRouter, salesPersonRouter } from "./routes/index.js";
+import {
+  categoriesRouter,
+  productsRouter,
+  salesPersonRouter,
+  supplierRouter,
+} from "./routes/index.js";
 
 config();
 const app = express();
@@ -22,8 +27,10 @@ app.use(cors());
 
 /** custom middlewares goes here */
 /** import routes here */
-app.use("/api/categories", categoriesRouter);
+app.use("/api/category", categoriesRouter);
 app.use("/api/user", salesPersonRouter);
+app.use("/api/product", productsRouter);
+app.use("/api/supplier", supplierRouter);
 
 app.use(
   (error: IHttpError, req: Request, res: Response, next: NextFunction) => {

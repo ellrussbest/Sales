@@ -1,7 +1,6 @@
 export * from "./http-error.js";
 export * from "./category.js";
 export * from "./product.js";
-export * from "./productReturned.js";
 export * from "./return.js";
 export * from "./salesPerson.js";
 export * from "./supplier.js";

@@ -62,16 +62,31 @@ export const createProduct = (req, res, next) => __awaiter(void 0, void 0, void 
         categoryId,
         image: (_b = req.file) === null || _b === void 0 ? void 0 : _b.path,
     });
+    let category;
     try {
-        yield createdProduct.save();
+        category = yield Category.findById(categoryId);
     }
     catch (err) {
-        const error = new HttpError("Creating category unsuccessful, please try again", 500);
+        return next(new HttpError("Creating new product failed", 500));
+    }
+    if (!category) {
+        return next(new HttpError("Could not find the category for the provided id", 404));
+    }
+    try {
+        const session = yield mongoose.startSession();
+        session.startTransaction();
+        yield createdProduct.save({ session });
+        category.products.push(createdProduct.id);
+        yield category.save({ session });
+        yield session.commitTransaction();
+    }
+    catch (err) {
+        const error = new HttpError("Creating product unsuccessful, please try again later", 500);
         return next(error);
     }
     res
         .status(201)
-        .json({ createProduct: createdProduct.toObject({ getters: true }) });
+        .json({ createdProduct: createdProduct.toObject({ getters: true }) });
 });
 /** Update an existing product */
 export const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -97,14 +112,45 @@ export const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 
         return next(error);
     }
     const currentImagePath = product.image;
+    const previousCategoryId = product.categoryId;
     product.name = name;
     product.price = price;
     product.image = req.file ? req.file.path : currentImagePath;
     product.quantity = quantity;
     product.company = company;
     product.categoryId = categoryId;
+    // the current category
+    let currentCategory;
     try {
-        yield product.save();
+        currentCategory = yield Category.findById(categoryId);
+    }
+    catch (err) {
+        return next(new HttpError("Creating new product failed", 500));
+    }
+    if (!currentCategory) {
+        return next(new HttpError("Could not find the category for the provided id", 404));
+    }
+    // the previous category
+    let previousCategory;
+    try {
+        previousCategory = yield Category.findById(previousCategoryId);
+    }
+    catch (err) {
+        return next(new HttpError("Creating new product failed", 500));
+    }
+    if (!previousCategory) {
+        return next(new HttpError("Could not find the category for the provided id", 404));
+    }
+    try {
+        const session = yield mongoose.startSession();
+        session.startTransaction();
+        yield product.save({ session });
+        // @ts-ignore
+        previousCategory.products.pull(previousCategoryId);
+        previousCategory.save({ session });
+        currentCategory.products.push(categoryId);
+        currentCategory.save({ session });
+        yield session.commitTransaction();
     }
     catch (err) {
         const error = new HttpError("Something went wrong, could not update Product.", 500);
