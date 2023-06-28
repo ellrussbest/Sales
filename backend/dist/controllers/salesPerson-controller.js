@@ -11,7 +11,7 @@ import { validationResult } from "express-validator";
 import { HttpError, SalesPerson } from "../models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-/** Get all SalesPeople **/
+/** Get all SalesPeople */
 export const getSalesPeople = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let salesPeople;
     try {
@@ -24,7 +24,7 @@ export const getSalesPeople = (req, res, next) => __awaiter(void 0, void 0, void
         salesPeople: salesPeople.map((salesPerson) => salesPerson.toObject({ getters: true })),
     });
 });
-/**  Get Category with specific ID **/
+/**  Get SalesPerson with specific ID **/
 export const getSalesPersonById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let salesPerson;
     try {
@@ -41,10 +41,10 @@ export const getSalesPersonById = (req, res, next) => __awaiter(void 0, void 0, 
         salesPerson: salesPerson.toObject({ getters: true }),
     });
 });
-/** Create a new SalesPerson **/
+/** Create a new SalesPerson */
 export const createSalesPerson = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
-    const { email, password } = req.body;
+    const { email } = req.body;
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         const error = new HttpError("Invalid inputs passed, please check your data", 422);
@@ -66,7 +66,7 @@ export const createSalesPerson = (req, res, next) => __awaiter(void 0, void 0, v
     }
     let hashedPassword;
     try {
-        hashedPassword = yield bcrypt.hash(password, 12);
+        hashedPassword = yield bcrypt.hash("ChangeThisPassword", 12);
     }
     catch (error) {
         return next(new HttpError("Could not create a new Sales person, please try again later", 500));
@@ -91,7 +91,7 @@ export const createSalesPerson = (req, res, next) => __awaiter(void 0, void 0, v
         status: createdSalesPerson.status,
     });
 });
-/** Update an existing Sales Person **/
+/** Update an existing Sales Person */
 export const updateSalesPerson = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _b;
     const { email, isAdmin, status, password } = req.body;
@@ -124,7 +124,6 @@ export const updateSalesPerson = (req, res, next) => __awaiter(void 0, void 0, v
     catch (error) {
         return next(new HttpError("Internal Server Error", 500));
     }
-    console.log(existingEmail);
     if (existingEmail.length !== 0) {
         return next(new HttpError("This email already exists in the database, use a unique email", 422));
     }
@@ -146,11 +145,15 @@ export const updateSalesPerson = (req, res, next) => __awaiter(void 0, void 0, v
         const error = new HttpError("Something went wrong, could not update Sales person.", 500);
         return next(error);
     }
-    res
-        .status(200)
-        .json({ salesPerson: salesPerson.toObject({ getters: true }) });
+    res.status(200).json({
+        salesPersonEmail: salesPerson.email,
+        isAdmin: salesPerson.isAdmin,
+        transactions: salesPerson.transactions,
+        status: salesPerson.status,
+        id: salesPerson.id,
+    });
 });
-/** Delete an existing a SalesPerson **/
+/** Delete an existing a SalesPerson */
 export const deleteSalesPerson = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _c;
     const { email } = req.body;

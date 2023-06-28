@@ -14,10 +14,7 @@ salesPersonRouter.post("/login", [
 /** Authenticate user */
 salesPersonRouter.use(checkAuth);
 /** Create a new sales person */
-salesPersonRouter.post("/", [
-    check("password").isLength({ min: 6 }),
-    check("email").normalizeEmail().isEmail(),
-], createSalesPerson);
+salesPersonRouter.post("/", [check("email").normalizeEmail().isEmail()], createSalesPerson);
 /** Update sales person */
 salesPersonRouter.patch("/:id", [
     check("password").isLength({ min: 6 }),

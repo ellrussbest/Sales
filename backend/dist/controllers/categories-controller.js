@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { validationResult } from "express-validator";
 import { HttpError, Category, Product } from "../models/index.js";
 import { default as mongoose } from "mongoose";
-/** Get all Categories **/
+/** Get all Categories */
 export const getCategories = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let categories;
     try {
@@ -23,7 +23,7 @@ export const getCategories = (req, res, next) => __awaiter(void 0, void 0, void 
         categories: categories.map((category) => category.toObject({ getters: true })),
     });
 });
-/**  Get Category with specific ID **/
+/**  Get Category with specific ID */
 export const getCategoryById = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     let category;
     try {
@@ -40,7 +40,7 @@ export const getCategoryById = (req, res, next) => __awaiter(void 0, void 0, voi
         category: category.toObject({ getters: true }),
     });
 });
-/** Create a new Category **/
+/** Create a new Category */
 export const createCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { name } = req.body;
@@ -111,9 +111,13 @@ export const updateCategory = (req, res, next) => __awaiter(void 0, void 0, void
     }
     res.status(200).json({ category: category.toObject({ getters: true }) });
 });
-/** Delete an existing Category **/
+/** Delete an existing Category */
 export const deleteCategory = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     let category;
+    if (!!((_c = req.userData) === null || _c === void 0 ? void 0 : _c.isAdmin) === false) {
+        return next(new HttpError("Unauthorized access, cannot perform operation", 401));
+    }
     try {
         category = yield Category.findById(req.params.id);
     }
@@ -131,5 +135,8 @@ export const deleteCategory = (req, res, next) => __awaiter(void 0, void 0, void
         yield category.deleteOne({ session: session });
         yield session.commitTransaction();
     }
-    catch (error) { }
+    catch (error) {
+        return next(new HttpError("Delete unsuccessful", 500));
+    }
+    res.status(200).json({ message: "Deleted Category" });
 });

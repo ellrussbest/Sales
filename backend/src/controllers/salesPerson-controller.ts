@@ -1,11 +1,11 @@
-import { param, validationResult } from "express-validator";
+import { validationResult } from "express-validator";
 import { HttpError, SalesPerson } from "../models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
 import { IRequest } from "../middleware/index.js";
 
-/** Get all SalesPeople **/
+/** Get all SalesPeople */
 export const getSalesPeople = async (
   req: IRequest,
   res: Response,
@@ -28,7 +28,7 @@ export const getSalesPeople = async (
   });
 };
 
-/**  Get Category with specific ID **/
+/**  Get SalesPerson with specific ID **/
 export const getSalesPersonById = async (
   req: IRequest,
   res: Response,
@@ -55,7 +55,7 @@ export const getSalesPersonById = async (
   });
 };
 
-/** Create a new SalesPerson **/
+/** Create a new SalesPerson */
 export const createSalesPerson = async (
   req: IRequest,
   res: Response,
@@ -137,7 +137,7 @@ export const createSalesPerson = async (
   });
 };
 
-/** Update an existing Sales Person **/
+/** Update an existing Sales Person */
 export const updateSalesPerson = async (
   req: IRequest,
   res: Response,
@@ -224,12 +224,16 @@ export const updateSalesPerson = async (
     return next(error);
   }
 
-  res
-    .status(200)
-    .json({ salesPerson: salesPerson.toObject({ getters: true }) });
+  res.status(200).json({
+    salesPersonEmail: salesPerson.email,
+    isAdmin: salesPerson.isAdmin,
+    transactions: salesPerson.transactions,
+    status: salesPerson.status,
+    id: salesPerson.id,
+  });
 };
 
-/** Delete an existing a SalesPerson **/
+/** Delete an existing a SalesPerson */
 export const deleteSalesPerson = async (
   req: IRequest,
   res: Response,
