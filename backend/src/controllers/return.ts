@@ -1,7 +1,5 @@
 import { validationResult } from "express-validator";
 import { HttpError, Transaction, Return, Product } from "../models/index.js";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import { Response, NextFunction } from "express";
 import { IRequest } from "../middleware/index.js";
 import { default as mongoose } from "mongoose";
@@ -54,7 +52,7 @@ export const getReturnById = async (
   });
 };
 
-/** create a new product return */
+/** create a new return */
 export const createReturn = async (
   req: IRequest,
   res: Response,
@@ -81,7 +79,7 @@ export const createReturn = async (
     return next(error);
   }
 
-  const createReturn = new Return({
+  const createdReturn = new Return({
     productId,
     reasonForReturn,
     transactionId,
@@ -105,9 +103,9 @@ export const createReturn = async (
     const session = await mongoose.startSession();
     session.startTransaction();
 
-    await createReturn.save({ session });
+    await createdReturn.save({ session });
 
-    transaction.products.push(createReturn.id);
+    transaction.products.push(createdReturn.id);
     await transaction.save({ session });
 
     await session.commitTransaction();
@@ -121,7 +119,7 @@ export const createReturn = async (
 
   res
     .status(201)
-    .json({ createdReturn: createReturn.toObject({ getters: true }) });
+    .json({ createdReturn: createdReturn.toObject({ getters: true }) });
 };
 
 /** update a return */
@@ -173,7 +171,7 @@ export const updateReturn = async (
   try {
     currentTransaction = await Transaction.findById(transactionId);
   } catch (err) {
-    return next(new HttpError("Creating new product failed", 500));
+    return next(new HttpError("Creating new return failed", 500));
   }
 
   if (!currentTransaction) {
