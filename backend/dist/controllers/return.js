@@ -40,7 +40,7 @@ export const getReturnById = (req, res, next) => __awaiter(void 0, void 0, void 
         return: _return.toObject({ getters: true }),
     });
 });
-/** create a new product return */
+/** create a new return */
 export const createReturn = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     var _a;
     const { productId, reasonForReturn, transactionId } = req.body;
@@ -53,7 +53,7 @@ export const createReturn = (req, res, next) => __awaiter(void 0, void 0, void 0
         const error = new HttpError("Could not create Return, unauthorized access.", 401);
         return next(error);
     }
-    const createReturn = new Return({
+    const createdReturn = new Return({
         productId,
         reasonForReturn,
         transactionId,
@@ -71,8 +71,8 @@ export const createReturn = (req, res, next) => __awaiter(void 0, void 0, void 0
     try {
         const session = yield mongoose.startSession();
         session.startTransaction();
-        yield createReturn.save({ session });
-        transaction.products.push(createReturn.id);
+        yield createdReturn.save({ session });
+        transaction.products.push(createdReturn.id);
         yield transaction.save({ session });
         yield session.commitTransaction();
     }
@@ -82,7 +82,7 @@ export const createReturn = (req, res, next) => __awaiter(void 0, void 0, void 0
     }
     res
         .status(201)
-        .json({ createdReturn: createReturn.toObject({ getters: true }) });
+        .json({ createdReturn: createdReturn.toObject({ getters: true }) });
 });
 /** update a return */
 export const updateReturn = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
@@ -117,7 +117,7 @@ export const updateReturn = (req, res, next) => __awaiter(void 0, void 0, void 0
         currentTransaction = yield Transaction.findById(transactionId);
     }
     catch (err) {
-        return next(new HttpError("Creating new product failed", 500));
+        return next(new HttpError("Creating new return failed", 500));
     }
     if (!currentTransaction) {
         return next(new HttpError("Could not find the transaction for the provided id", 404));
