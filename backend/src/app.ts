@@ -8,12 +8,12 @@ import { IHttpError } from "./models/index.js";
 import mongoose from "mongoose";
 
 /** Route imports */
-import { categoriesRouter } from "./routes/index.js";
+import { categoriesRouter, salesPersonRouter } from "./routes/index.js";
 
 config();
 const app = express();
 
-// parsing bodyParser.json() as a middleware
+/** Parsing bodyParser.json() as a middleware */
 app.use(bodyParser.json());
 
 app.use("uploads/images", express.static(path.join("uploads", "images")));
@@ -23,6 +23,7 @@ app.use(cors());
 /** custom middlewares goes here */
 /** import routes here */
 app.use("/api/categories", categoriesRouter);
+app.use("/api/user", salesPersonRouter);
 
 app.use(
   (error: IHttpError, req: Request, res: Response, next: NextFunction) => {

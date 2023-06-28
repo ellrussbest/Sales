@@ -12,6 +12,7 @@ export function checkAuth(req, res, next) {
         req.userData = {
             userId: typeof decodedToken !== "string" && decodedToken.userId,
             isAdmin: typeof decodedToken !== "string" && decodedToken.isAdmin,
+            status: typeof decodedToken !== "string" && decodedToken.status,
         };
     }
     catch (error) {

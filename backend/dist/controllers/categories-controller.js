@@ -87,7 +87,7 @@ export const updateCategory = (req, res, next) => __awaiter(void 0, void 0, void
         return new HttpError("Invalid inputs passed, please check your data", 422);
     }
     if (!!((_b = req.userData) === null || _b === void 0 ? void 0 : _b.isAdmin) === false) {
-        const error = new HttpError("Could not create Category, unauthorized access.", 401);
+        const error = new HttpError("Could not update Category, unauthorized access.", 401);
         return next(error);
     }
     let category;

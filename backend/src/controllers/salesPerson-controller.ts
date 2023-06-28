@@ -227,15 +227,16 @@ export const updateSalesPerson = async (
 };
 
 /** Delete an existing a SalesPerson **/
-export const deleteCategory = async (
+export const deleteSalesPerson = async (
   req: IRequest,
   res: Response,
   next: NextFunction
 ) => {
+    const { email } = req.body;
   let salesPerson;
 
   try {
-    salesPerson = await SalesPerson.findById(req.params.id).select("-password");
+    salesPerson = await SalesPerson.findOne({ email });
   } catch (err) {
     const error = new HttpError(
       "Something went wrong here, could not delete SalesPerson",

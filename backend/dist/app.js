@@ -7,16 +7,17 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 /** Route imports */
-import { categoriesRouter } from "./routes/index.js";
+import { categoriesRouter, salesPersonRouter } from "./routes/index.js";
 config();
 const app = express();
-// parsing bodyParser.json() as a middleware
+/** Parsing bodyParser.json() as a middleware */
 app.use(bodyParser.json());
 app.use("uploads/images", express.static(path.join("uploads", "images")));
 app.use(cors());
 /** custom middlewares goes here */
 /** import routes here */
 app.use("/api/categories", categoriesRouter);
+app.use("/api/user", salesPersonRouter);
 app.use((error, req, res, next) => {
     var _a;
     if (req.file) {
