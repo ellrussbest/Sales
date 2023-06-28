@@ -116,11 +116,15 @@ export const updateSalesPerson = (req, res, next) => __awaiter(void 0, void 0, v
     }
     let existingEmail;
     try {
-        existingEmail = yield SalesPerson.find({ email });
+        existingEmail = yield SalesPerson.find({
+            _id: { $ne: req.params.id },
+            email,
+        });
     }
     catch (error) {
         return next(new HttpError("Internal Server Error", 500));
     }
+    console.log(existingEmail);
     if (existingEmail.length !== 0) {
         return next(new HttpError("This email already exists in the database, use a unique email", 422));
     }
@@ -148,8 +152,12 @@ export const updateSalesPerson = (req, res, next) => __awaiter(void 0, void 0, v
 });
 /** Delete an existing a SalesPerson **/
 export const deleteSalesPerson = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _c;
     const { email } = req.body;
     let salesPerson;
+    if (!!((_c = req.userData) === null || _c === void 0 ? void 0 : _c.isAdmin) === false) {
+        return next(new HttpError("Unauthorized access", 401));
+    }
     try {
         salesPerson = yield SalesPerson.findOne({ email });
     }
@@ -203,7 +211,8 @@ export const login = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         token = jwt.sign({
             userId: existingUser.id,
             email: existingUser.email,
-            staus: existingUser.status,
+            status: existingUser.status,
+            isAdmin: existingUser.isAdmin,
         }, process.env.SECRET, { expiresIn: "1h" });
     }
     catch (err) {

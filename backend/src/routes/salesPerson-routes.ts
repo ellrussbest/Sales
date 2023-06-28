@@ -16,22 +16,29 @@ export const salesPersonRouter = express.Router();
 salesPersonRouter.get("/", getSalesPeople);
 salesPersonRouter.get("/:id", getSalesPersonById);
 
+/** Login */
+salesPersonRouter.post(
+  "/login",
+  [
+    check("password").isLength({ min: 6 }),
+    check("email").normalizeEmail().isEmail(),
+  ],
+  login
+);
+
 /** Authenticate user */
 salesPersonRouter.use(checkAuth);
 
 /** Create a new sales person */
 salesPersonRouter.post(
   "/",
-  [
-    check("password").isLength({ min: 6 }),
-    check("email").normalizeEmail().isEmail(),
-  ],
+  [check("email").normalizeEmail().isEmail()],
   createSalesPerson
 );
 
 /** Update sales person */
 salesPersonRouter.patch(
-  "/",
+  "/:id",
   [
     check("password").isLength({ min: 6 }),
     check("email").normalizeEmail().isEmail(),
@@ -46,14 +53,4 @@ salesPersonRouter.delete(
   "/",
   [check("email").normalizeEmail().isEmail()],
   deleteSalesPerson
-);
-
-/** Login */
-salesPersonRouter.post(
-  "/login",
-  [
-    check("password").isLength({ min: 6 }),
-    check("email").normalizeEmail().isEmail(),
-  ],
-  login
 );

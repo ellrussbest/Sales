@@ -6,7 +6,8 @@ export interface IRequest extends Request {
   userData?: {
     userId: string;
     isAdmin: boolean;
-    status: "ACTIVE" | "INACTIVE"
+    status: "ACTIVE" | "INACTIVE";
+    email: string;
   };
 }
 
@@ -22,7 +23,9 @@ export function checkAuth(req: IRequest, res: Response, next: NextFunction) {
       userId: typeof decodedToken !== "string" && decodedToken.userId,
       isAdmin: typeof decodedToken !== "string" && decodedToken.isAdmin,
       status: typeof decodedToken !== "string" && decodedToken.status,
+      email: typeof decodedToken !== "string" && decodedToken.email,
     };
+    next();
   } catch (error) {
     return new HttpError("Authentication failed", 403);
   }

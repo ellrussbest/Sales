@@ -13,7 +13,9 @@ export function checkAuth(req, res, next) {
             userId: typeof decodedToken !== "string" && decodedToken.userId,
             isAdmin: typeof decodedToken !== "string" && decodedToken.isAdmin,
             status: typeof decodedToken !== "string" && decodedToken.status,
+            email: typeof decodedToken !== "string" && decodedToken.email,
         };
+        next();
     }
     catch (error) {
         return new HttpError("Authentication failed", 403);

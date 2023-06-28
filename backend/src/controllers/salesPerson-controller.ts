@@ -1,4 +1,4 @@
-import { validationResult } from "express-validator";
+import { param, validationResult } from "express-validator";
 import { HttpError, SalesPerson } from "../models/index.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -61,7 +61,7 @@ export const createSalesPerson = async (
   res: Response,
   next: NextFunction
 ) => {
-  const { email, password } = req.body;
+  const { email } = req.body;
 
   const errors = validationResult(req);
 
@@ -102,7 +102,7 @@ export const createSalesPerson = async (
   let hashedPassword;
 
   try {
-    hashedPassword = await bcrypt.hash(password, 12);
+    hashedPassword = await bcrypt.hash("ChangeThisPassword", 12);
   } catch (error) {
     return next(
       new HttpError(
@@ -178,7 +178,10 @@ export const updateSalesPerson = async (
   let existingEmail;
 
   try {
-    existingEmail = await SalesPerson.find({ email });
+    existingEmail = await SalesPerson.find({
+      _id: { $ne: req.params.id },
+      email,
+    });
   } catch (error) {
     return next(new HttpError("Internal Server Error", 500));
   }
@@ -232,8 +235,12 @@ export const deleteSalesPerson = async (
   res: Response,
   next: NextFunction
 ) => {
-    const { email } = req.body;
+  const { email } = req.body;
   let salesPerson;
+
+  if (!!req.userData?.isAdmin === false) {
+    return next(new HttpError("Unauthorized access", 401));
+  }
 
   try {
     salesPerson = await SalesPerson.findOne({ email });
@@ -324,7 +331,8 @@ export const login = async (
       {
         userId: existingUser.id,
         email: existingUser.email,
-        staus: existingUser.status,
+        status: existingUser.status,
+        isAdmin: existingUser.isAdmin,
       },
       process.env.SECRET,
       { expiresIn: "1h" }
