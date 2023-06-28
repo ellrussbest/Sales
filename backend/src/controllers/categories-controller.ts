@@ -136,7 +136,7 @@ export const updateCategory = async (
 
   if (!!req.userData?.isAdmin === false) {
     const error = new HttpError(
-      "Could not create Category, unauthorized access.",
+      "Could not update Category, unauthorized access.",
       401
     );
     return next(error);
