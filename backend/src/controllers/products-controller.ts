@@ -360,20 +360,20 @@ export const buyProduct = async (
   const { products: productArrayVariable, transactionId } = req.body;
   const products: productArray = productArrayVariable;
 
-  const finalPrices = [];
+  const finalPrices: number[] = [];
 
   for (let i = 0; i < products.length; i++) {
     let productId = products[i].productId;
     let discount = products[i].discount;
+    const result = await buy(productId, transactionId, discount);
 
-    if ((await buy(productId, transactionId, discount)) instanceof HttpError) {
-      return next(await buy(productId, transactionId, discount));
+    if (result instanceof HttpError) {
+      return next(result);
     }
 
-    finalPrices.push(await buy(productId, transactionId, discount));
+    finalPrices.push(result);
   }
 
-  // @ts-ignore
   const total: number = finalPrices.reduce((prev, curr) => prev + curr, 0);
 
   res.status(201).json({
