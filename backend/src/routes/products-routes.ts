@@ -7,18 +7,19 @@ import {
   createProduct,
   updateProduct,
   deleteProduct,
+  buyProduct,
 } from "../controllers/index.js";
 
 export const productsRouter = express.Router();
 
-/** get categories */ productsRouter;
+/** get products */
 productsRouter.get("/", getProducts);
 productsRouter.get("/:id", getProductById);
 
 /** Authenticate user */
 productsRouter.use(checkAuth);
 
-/** Create a new category */
+/** Create a new product */
 productsRouter.post(
   "/",
   fileUpload.single("image"),
@@ -32,7 +33,7 @@ productsRouter.post(
   createProduct
 );
 
-/** Update existing category */
+/** Update existing product */
 productsRouter.patch(
   "/:id",
   fileUpload.single("image"),
@@ -46,5 +47,12 @@ productsRouter.patch(
   updateProduct
 );
 
-/** Delete existing category */
+/** Delete existing product */
 productsRouter.delete("/:id", deleteProduct);
+
+/** Buy Product */
+productsRouter.post(
+  "/buy",
+  [check("products").isArray(), check("transactionId").not().isEmpty()],
+  buyProduct
+);

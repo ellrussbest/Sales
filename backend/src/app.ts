@@ -11,6 +11,7 @@ import mongoose from "mongoose";
 import {
   categoriesRouter,
   productsRouter,
+  returnsRouter,
   salesPersonRouter,
   supplierRouter,
 } from "./routes/index.js";
@@ -31,6 +32,7 @@ app.use("/api/category", categoriesRouter);
 app.use("/api/user", salesPersonRouter);
 app.use("/api/product", productsRouter);
 app.use("/api/supplier", supplierRouter);
+app.use("api/return", returnsRouter);
 
 app.use(
   (error: IHttpError, req: Request, res: Response, next: NextFunction) => {

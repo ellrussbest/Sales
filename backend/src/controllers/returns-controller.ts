@@ -202,10 +202,10 @@ export const updateReturn = async (
 
     // @ts-ignore
     previousTransaction.returns.pull(previousTransactionId);
-    previousTransaction.save({ session });
+    await previousTransaction.save({ session });
 
     currentTransaction.returns.push(transactionId);
-    currentTransaction.save({ session });
+    await currentTransaction.save({ session });
 
     await session.commitTransaction();
   } catch (err) {

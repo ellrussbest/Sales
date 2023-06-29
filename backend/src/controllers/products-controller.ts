@@ -1,5 +1,5 @@
 import { validationResult } from "express-validator";
-import { HttpError, Category, Product } from "../models/index.js";
+import { HttpError, Category, Product, Transaction } from "../models/index.js";
 import fs from "fs";
 import { default as mongoose } from "mongoose";
 import { Response, NextFunction } from "express";
@@ -210,10 +210,10 @@ export const updateProduct = async (
 
     // @ts-ignore
     previousCategory.products.pull(previousCategoryId);
-    previousCategory.save({ session });
+    await previousCategory.save({ session });
 
     currentCategory.products.push(categoryId);
-    currentCategory.save({ session });
+    await currentCategory.save({ session });
 
     await session.commitTransaction();
   } catch (err) {
@@ -287,4 +287,97 @@ export const deleteProduct = async (
   fs.unlink(imagePath, (err) => console.log(err));
 
   res.status(200).json({ message: "Deleted product" });
+};
+
+/** Buy one product function */
+const buy = async (
+  productId: string,
+  transactionId: string,
+  discount: number = 0
+): Promise<number | HttpError> => {
+  let product, transaction;
+  try {
+    product = await Product.findById(productId);
+  } catch (error) {
+    return new HttpError("internal server error", 500);
+  }
+
+  if (!product) {
+    return new HttpError("Product not found", 404);
+  }
+
+  const price = product.price;
+  let quantity = product.quantity;
+
+  try {
+    product.quantity = quantity - 1;
+    await product.save();
+  } catch (error) {
+    return new HttpError("problem updating quantity", 500);
+  }
+
+  try {
+    transaction = await Transaction.findById(transactionId);
+  } catch (error) {
+    return new HttpError("Error finding the associated transaction", 500);
+  }
+
+  if (!transaction) {
+    return new HttpError("There is no associated transaction", 404);
+  }
+
+  transaction.products.push(product.id);
+
+  try {
+    await transaction.save();
+  } catch (error) {
+    return new HttpError("Problem updating transaction", 500);
+  }
+
+  const finalPrice = price * ((100 - discount) / 100);
+  return finalPrice;
+};
+
+interface productObject {
+  productId: string;
+  discount: number;
+}
+
+type productArray = productObject[];
+
+/** Buy product */
+export const buyProduct = async (
+  req: IRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.userData?.status !== "ACTIVE") {
+    return next(
+      new HttpError("Unauthorized access, cannot complete operation", 401)
+    );
+  }
+
+  const { products: productArrayVariable, transactionId } = req.body;
+  const products: productArray = productArrayVariable;
+
+  const finalPrices = [];
+
+  for (let i = 0; i < products.length; i++) {
+    let productId = products[i].productId;
+    let discount = products[i].discount;
+
+    if ((await buy(productId, transactionId, discount)) instanceof HttpError) {
+      return next(await buy(productId, transactionId, discount));
+    }
+
+    finalPrices.push(await buy(productId, transactionId, discount));
+  }
+
+  // @ts-ignore
+  const total: number = finalPrices.reduce((prev, curr) => prev + curr, 0);
+
+  res.status(201).json({
+    transactionId,
+    totalPrice: total,
+  });
 };
