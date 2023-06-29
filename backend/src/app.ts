@@ -14,6 +14,7 @@ import {
   returnsRouter,
   salesPersonRouter,
   supplierRouter,
+  transactionsRouter,
 } from "./routes/index.js";
 
 config();
@@ -32,7 +33,8 @@ app.use("/api/category", categoriesRouter);
 app.use("/api/user", salesPersonRouter);
 app.use("/api/product", productsRouter);
 app.use("/api/supplier", supplierRouter);
-app.use("api/return", returnsRouter);
+app.use("/api/return", returnsRouter);
+app.use("/api/transaction", transactionsRouter);
 
 app.use(
   (error: IHttpError, req: Request, res: Response, next: NextFunction) => {
