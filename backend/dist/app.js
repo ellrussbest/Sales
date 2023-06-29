@@ -7,7 +7,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 /** Route imports */
-import { categoriesRouter, productsRouter, salesPersonRouter, supplierRouter, } from "./routes/index.js";
+import { categoriesRouter, productsRouter, returnsRouter, salesPersonRouter, supplierRouter, transactionsRouter, } from "./routes/index.js";
 config();
 const app = express();
 /** Parsing bodyParser.json() as a middleware */
@@ -20,6 +20,8 @@ app.use("/api/category", categoriesRouter);
 app.use("/api/user", salesPersonRouter);
 app.use("/api/product", productsRouter);
 app.use("/api/supplier", supplierRouter);
+app.use("/api/return", returnsRouter);
+app.use("/api/transaction", transactionsRouter);
 app.use((error, req, res, next) => {
     var _a;
     if (req.file) {

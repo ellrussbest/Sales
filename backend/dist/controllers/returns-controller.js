@@ -139,9 +139,9 @@ export const updateReturn = (req, res, next) => __awaiter(void 0, void 0, void 0
         yield _return.save({ session });
         // @ts-ignore
         previousTransaction.returns.pull(previousTransactionId);
-        previousTransaction.save({ session });
+        yield previousTransaction.save({ session });
         currentTransaction.returns.push(transactionId);
-        currentTransaction.save({ session });
+        yield currentTransaction.save({ session });
         yield session.commitTransaction();
     }
     catch (err) {

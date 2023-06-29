@@ -8,7 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 import { validationResult } from "express-validator";
-import { HttpError, Category, Product } from "../models/index.js";
+import { HttpError, Category, Product, Transaction } from "../models/index.js";
 import fs from "fs";
 import { default as mongoose } from "mongoose";
 /** Get all products */
@@ -147,9 +147,9 @@ export const updateProduct = (req, res, next) => __awaiter(void 0, void 0, void 
         yield product.save({ session });
         // @ts-ignore
         previousCategory.products.pull(previousCategoryId);
-        previousCategory.save({ session });
+        yield previousCategory.save({ session });
         currentCategory.products.push(categoryId);
-        currentCategory.save({ session });
+        yield currentCategory.save({ session });
         yield session.commitTransaction();
     }
     catch (err) {
@@ -194,4 +194,68 @@ export const deleteProduct = (req, res, next) => __awaiter(void 0, void 0, void 
     }
     fs.unlink(imagePath, (err) => console.log(err));
     res.status(200).json({ message: "Deleted product" });
+});
+/** Buy one product function */
+const buy = (productId, transactionId, discount = 0) => __awaiter(void 0, void 0, void 0, function* () {
+    let product, transaction;
+    try {
+        product = yield Product.findById(productId);
+    }
+    catch (error) {
+        return new HttpError("internal server error", 500);
+    }
+    if (!product) {
+        return new HttpError("Product not found", 404);
+    }
+    const price = product.price;
+    let quantity = product.quantity;
+    try {
+        product.quantity = quantity - 1;
+        yield product.save();
+    }
+    catch (error) {
+        return new HttpError("problem updating quantity", 500);
+    }
+    try {
+        transaction = yield Transaction.findById(transactionId);
+    }
+    catch (error) {
+        return new HttpError("Error finding the associated transaction", 500);
+    }
+    if (!transaction) {
+        return new HttpError("There is no associated transaction", 404);
+    }
+    transaction.products.push(product.id);
+    try {
+        yield transaction.save();
+    }
+    catch (error) {
+        return new HttpError("Problem updating transaction", 500);
+    }
+    const finalPrice = price * ((100 - discount) / 100);
+    return finalPrice;
+});
+/** Buy product */
+export const buyProduct = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+    var _e;
+    if (((_e = req.userData) === null || _e === void 0 ? void 0 : _e.status) !== "ACTIVE") {
+        return next(new HttpError("Unauthorized access, cannot complete operation", 401));
+    }
+    const { products: productArrayVariable, transactionId } = req.body;
+    const products = productArrayVariable;
+    const finalPrices = [];
+    for (let i = 0; i < products.length; i++) {
+        let productId = products[i].productId;
+        let discount = products[i].discount;
+        if ((yield buy(productId, transactionId, discount)) instanceof HttpError) {
+            return next(yield buy(productId, transactionId, discount));
+        }
+        finalPrices.push(yield buy(productId, transactionId, discount));
+    }
+    // @ts-ignore
+    const total = finalPrices.reduce((prev, curr) => prev + curr, 0);
+    res.status(201).json({
+        transactionId,
+        totalPrice: total,
+    });
 });
