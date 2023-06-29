@@ -363,8 +363,8 @@ export const buyProduct = async (
   const finalPrices: number[] = [];
 
   for (let i = 0; i < products.length; i++) {
-    let productId = products[i].productId;
-    let discount = products[i].discount;
+    const productId = products[i].productId;
+    const discount = products[i].discount;
     const result = await buy(productId, transactionId, discount);
 
     if (result instanceof HttpError) {
