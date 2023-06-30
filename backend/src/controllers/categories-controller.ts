@@ -117,7 +117,7 @@ export const createCategory = async (
     return next(error);
   }
 
-  res.status(201).json({ categoryName: createCategory.name });
+  res.status(201).json({ categoryName: createdCategory.name });
 };
 
 /** Update an existing Category **/
