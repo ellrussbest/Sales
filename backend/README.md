@@ -15,3 +15,5 @@
     // jwt secret private API_KEY
     SECRET=just_input_any_string_that_is_hard_to_guess
 ```
+- For you to test the functionality of product uploads or delete, on the root directory create uploads/images/ folder
+- Now your good to go <strong> Have Fun!!! </strong>
