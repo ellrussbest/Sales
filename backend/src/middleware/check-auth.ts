@@ -27,6 +27,6 @@ export function checkAuth(req: IRequest, res: Response, next: NextFunction) {
     };
     next();
   } catch (error) {
-    return new HttpError("Authentication failed", 403);
+    return next(new HttpError("Authentication failed", 403));
   }
 }
