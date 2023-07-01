@@ -23,7 +23,7 @@ const app = express();
 /** Parsing bodyParser.json() as a middleware */
 app.use(bodyParser.json());
 
-app.use("uploads/images", express.static(path.join("uploads", "images")));
+app.use("/uploads/images", express.static(path.join("uploads", "images")));
 
 app.use(cors());
 

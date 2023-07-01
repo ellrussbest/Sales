@@ -29,6 +29,7 @@ export const fileUpload = multer({
         case "image/png":
           extension = MIME_TYPE["image/png"];
           cb(null, uuid() + "." + extension);
+          break;
         default:
           extension = file.mimetype;
           cb(new Error("Invalid Mime Type!"), uuid() + "." + extension);
